@@ -44,6 +44,7 @@ const cards = document.querySelector('#cards');
 const message = document.querySelector('#message');
 const dialog = document.querySelector('#quiz');
 let selected = null;
+const failedPairs = new Set(), failedQuizzes = new Set();
 const matched = new Set(), solved = new Set();
 let roundPairs = [], roundQuizzes = [], deck = [];
 
@@ -65,9 +66,10 @@ function drawRound(bank, previous) {
  return picked;
 }
 function update() {
- document.querySelector('#score').textContent=(matched.size+solved.size)*10;
+ document.querySelector('#score').textContent=(matched.size+solved.size-failedPairs.size-failedQuizzes.size)*10;
  document.querySelector('#progress').textContent=matched.size+solved.size;
  document.querySelector('#finish').hidden=matched.size+solved.size!==8;
+ document.querySelector('#finish p').textContent=`完成 8 個任務，答對 ${matched.size+solved.size-failedPairs.size-failedQuizzes.size} 題，共得 ${(matched.size+solved.size-failedPairs.size-failedQuizzes.size)*10} 分！看看小知識，再挑戰一次吧。`;
 }
 function render() {
  cards.replaceChildren();
@@ -75,11 +77,12 @@ function render() {
   const done=type==='orange'?solved.has(item.id):matched.has(item.id);
   const data=type==='orange'?[item.icon,item.title,'點我回答，練習守護環境！']:item[type];
   const button=document.createElement('button');
-  button.className=`card ${type}${done?' completed':''}${type==='blue'&&selected===item.id?' selected':''}`;
+  const wrong=type==='orange'?failedQuizzes.has(item.id):failedPairs.has(item.id);
+  button.className=`card ${type}${done?' completed':''}${type==='blue'&&selected===item.id?' selected':''}${wrong?' incorrect':''}`;
   button.dataset.id=item.id;
   button.disabled=done;
   if(type==='blue') button.setAttribute('aria-pressed',String(selected===item.id));
-  button.innerHTML=`<span class="type">${{blue:'水環境卡',green:'生態卡',orange:'守護挑戰卡'}[type]}</span><span class="icon" aria-hidden="true">${data[0]}</span><span class="title">${data[1]}</span><span class="desc">${data[2]}</span>${done?'<span class="check">✓ 完成</span>':''}`;
+  button.innerHTML=`<span class="type">${{blue:'水環境卡',green:'生態卡',orange:'守護挑戰卡'}[type]}</span><span class="icon" aria-hidden="true">${data[0]}</span><span class="title">${data[1]}</span><span class="desc">${wrong&&type!=='orange'?`正確配對：${item.blue[1]} ＋ ${item.green[1]}`:data[2]}</span>${done?`<span class="check">${wrong?'已作答・0 分':'✓ 答對'}</span>`:''}`;
   button.onclick=()=>choose(type,item);
   cards.append(button);
  }
@@ -101,13 +104,19 @@ function choose(type,item) {
   render();
  } else {
   const chosen=roundPairs.find(pair=>pair.id===selected);
-  message.textContent=`再想一想！「${chosen.blue[1]}」的提示是：${chosen.blue[2]} 找找能呼應這個提示的綠卡。`;
+  matched.add(chosen.id);failedPairs.add(chosen.id);
+  const next=roundPairs.find(pair=>!matched.has(pair.id));
+  selected=next?.id ?? null;
+  message.textContent=`這題 0 分。正確配對：「${chosen.blue[1]}」＋「${chosen.green[1]}」。${chosen.lesson} ${next?`接著請為「${next.blue[1]}」選綠卡！`:'配對題已完成，請繼續橘卡問答。'}`;
+  render();
+  if(next) document.querySelector(`.blue[data-id="${next.id}"]`).focus({preventScroll:true});
  }
 }
 function openQuiz(q) {
  if(solved.has(q.id)) return;
  document.querySelector('#question').textContent=q.question;
  document.querySelector('#feedback').textContent='';
+ document.querySelector('#quizDone').textContent='完成挑戰';
  document.querySelector('#quizDone').hidden=true;
  const answers=document.querySelector('#answers');
  answers.replaceChildren();
@@ -119,13 +128,18 @@ function openQuiz(q) {
     solved.add(q.id);b.classList.add('correct');
     for(const option of answers.children) option.disabled=true;
     document.querySelector('#feedback').textContent=`答對了！＋10 分。${q.explain}`;
+    document.querySelector('#quizDone').textContent='下一題';
     document.querySelector('#quizDone').hidden=false;
     update();
    } else {
-    b.classList.add('wrong');b.disabled=true;
-    document.querySelector('#feedback').textContent=`再試一次！${q.hint}`;
-    const next=[...answers.children].find(option=>!option.disabled);
-    next?.focus();
+    solved.add(q.id);failedQuizzes.add(q.id);
+    b.classList.add('wrong');
+    [...answers.children].forEach((option,i)=>{option.disabled=true;if(i===q.correct)option.classList.add('correct');});
+    document.querySelector('#feedback').textContent=`這題 0 分。正確答案：${q.answers[q.correct]}。${q.explain}`;
+    document.querySelector('#quizDone').textContent='下一題';
+    document.querySelector('#quizDone').hidden=false;
+    update();
+    document.querySelector('#quizDone').focus();
    }
   };
   answers.append(b);
@@ -133,14 +147,17 @@ function openQuiz(q) {
  dialog.showModal();
 }
 dialog.addEventListener('close',render);
-document.querySelector('#quizDone').onclick=()=>dialog.close();
+document.querySelector('#quizDone').onclick=()=>{
+ const next=roundQuizzes.find(q=>!solved.has(q.id));
+ if(next) openQuiz(next);else dialog.close();
+};
 function reset() {
  if(dialog.open) dialog.close();
  roundPairs=drawRound(pairs,roundPairs);
  roundQuizzes=drawRound(quizzes,roundQuizzes);
  const entries=[...roundPairs.flatMap(item=>[{type:'blue',item},{type:'green',item}]),...roundQuizzes.map(item=>({type:'orange',item}))];
  deck=shuffle(entries);
- selected=null;matched.clear();solved.clear();
+ selected=null;matched.clear();solved.clear();failedPairs.clear();failedQuizzes.clear();
  message.textContent='新題目準備好了！先選藍卡，再找綠卡配對；也可以先挑戰橘卡！';
  render();
 }
