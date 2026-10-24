@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>中港大排・水循環探險隊</title><link rel="stylesheet" href="style.css"></head>
+<body><header><a class="brand" href="./">💧 中港大排 <span>水循環探險隊</span></a><span class="badge">適合國小二～五年級</span></header>
+<main><section class="intro"><div class="eyebrow">一起認識水，守護我們的環境</div><h1>小小水滴，<br>大大的冒險！</h1><p>走進中港大排的水岸教室，<br>找出水與生態的好朋友，成為環境守護員。</p><div class="steps"><span>💧 選一張藍卡</span><b>＋</b><span>🌿 找綠卡配對</span><b>＋</b><span>☀️ 挑戰環境問答</span></div></section>
+<section class="game" aria-label="互動卡牌遊戲"><div class="dashboard"><div><h2>你的探險卡牌</h2><p>4 組配對・4 道挑戰・每次答對得 10 分</p></div><div class="stats"><span>⭐ <strong id="score">0</strong> 分</span><span>🏁 <strong id="progress">0</strong> / 8</span><button id="restart" class="secondary">重新開始</button></div></div>
+<div class="guide"><span id="message" role="status" aria-live="polite">先選一張藍色水環境卡，再找一張綠色生態卡；也可以先挑戰橘卡！</span></div>
+<div class="legend"><span>● 藍色：水環境</span><span>● 綠色：生態好朋友</span><span>● 橘色：守護挑戰</span></div><div id="cards" class="cards"></div>
+<section id="finish" class="finish" hidden><h2>🎉 你是水環境小小守護員！</h2><p>8 個任務全部完成！把今天學到的水岸知識，分享給家人吧。</p><button id="again">再探險一次</button></section></section>
+<section class="note"><span>🌏</span><div><h2>水岸觀察小提醒</h2><p>中港大排是城市排水與水岸環境教育的好場域。觀察動植物要保持距離，不餵食、不抓取，也不要進入水道。這裡的卡牌用來認識水循環與水岸生態，並非現地物種調查。</p></div></section>
+</main><footer>每一個小小行動，都能讓水環境更美好。 🌱</footer>
+<dialog id="quiz"><form method="dialog"><button class="close secondary" aria-label="關閉問答">✕</button></form><span class="eyebrow">環境守護挑戰</span><h2 id="question"></h2><div id="answers"></div><p id="feedback" role="status" aria-live="polite"></p><button id="quizDone" hidden>完成挑戰</button></dialog><script src="app.js"></script></body></html>
