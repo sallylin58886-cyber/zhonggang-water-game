@@ -1,14 +1,16 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>中港大排・水循環探險隊</title><link rel="stylesheet" href="style.css"></head>
-<body><header><a class="brand" href="./">💧 中港大排 <span>水循環探險隊</span></a><span class="badge">適合國小二～五年級</span></header>
-<main><section class="intro"><div class="eyebrow">一起認識水，守護我們的環境</div><h1>小小水滴，<br>大大的冒險！</h1><p>走進中港大排的水岸教室，<br>找出水與生態的好朋友，成為環境守護員。</p><div class="steps"><span>💧 選一張藍卡</span><b>＋</b><span>🌿 找綠卡配對</span><b>＋</b><span>☀️ 挑戰環境問答</span></div></section>
+<body><header><a class="brand" href="./">💧 中港大排 <span>水循環探險隊</span></a><span class="badge">親子共玩・國小二～五年級</span></header>
+<main><section class="intro"><div class="eyebrow">一起認識水，守護我們的環境</div><h1>小小水滴，<br>大大的冒險！</h1><p>和家人走進中港大排的水岸教室，<br>一起觀察、想一想，成為環境守護員。</p><div class="steps"><span>💧 選一張藍卡</span><b>＋</b><span>🌿 找綠卡配對</span><b>＋</b><span>☀️ 挑戰環境問答</span></div></section>
+<details class="family-guide"><summary>👨‍👩‍👧 親子怎麼一起玩？</summary><p>小朋友先觀察、選答案；大人可以幫忙讀題、解釋詞語，先不說答案。作答後一起看小知識，再聊聊「親子想一想」。討論沒有標準答案，也不計分。</p><p>一個人也能玩：讀完卡牌後自己作答，遇到新詞可以請大人幫忙。最後的分數是這次作答的紀錄，不是評量誰比較厲害。</p></details>
 <section class="game" aria-label="互動卡牌遊戲"><div class="dashboard"><div><h2>你的探險卡牌</h2><p>測驗模式・4 組配對＋6 題問答・答對 10 分・滿分 100 分</p></div><div class="stats"><span>⭐ <strong id="score">0</strong> 分</span><span>🏁 <strong id="progress">0</strong> / 10</span><button id="restart" class="secondary">重新開始</button></div></div>
 <div class="guide"><span id="message" role="status" aria-live="polite">先選一張藍色水環境卡，再找一張綠色生態卡；也可以先挑戰橘卡！</span></div>
 <div class="legend"><span>● 藍色：水環境</span><span>● 綠色：生態好朋友</span><span>● 橘色：守護挑戰</span></div><div id="cards">
 <section class="card-section pairing-section" aria-labelledby="pair-heading"><div class="section-heading"><h3 id="pair-heading">💧 第一區：藍綠卡配對</h3><span id="pair-progress">已作答 0 / 4 組</span></div><p class="section-help">先選藍色水環境卡，再找有關聯的綠色生態卡。</p><div id="pair-cards" class="cards"></div></section>
 <section class="card-section quiz-section" aria-labelledby="quiz-heading"><div class="section-heading"><h3 id="quiz-heading">☀️ 第二區：環境守護問答</h3><span id="quiz-progress">已作答 0 / 6 題</span></div><p class="section-help">點橘色卡回答問題，作答後按「下一題」繼續。</p><div id="quiz-cards" class="cards"></div></section>
 </div>
+<details id="family-talk" class="family-guide" hidden><summary>💬 親子想一想（不計分）</summary><p></p></details>
 <section id="finish" class="finish" hidden><h2>🎉 水環境測驗完成！</h2><p>10 個任務全部完成！把今天學到的水岸知識，分享給家人吧。</p><button id="again">再探險一次</button></section></section>
 <section class="note"><span>🌏</span><div><h2>水岸觀察小提醒</h2><p>中港大排是城市排水與水岸環境教育的好場域。觀察動植物要保持距離，不餵食、不抓取，也不要進入水道。這裡的卡牌用來認識水循環與水岸生態，並非現地物種調查。</p></div></section>
 </main><footer>每一個小小行動，都能讓水環境更美好。 🌱</footer>
-<dialog id="quiz"><form method="dialog"><button class="close secondary" aria-label="關閉問答">✕</button></form><span class="eyebrow">環境守護挑戰</span><h2 id="question"></h2><div id="answers"></div><p id="feedback" role="status" aria-live="polite"></p><button id="quizDone" hidden>完成挑戰</button></dialog><script src="app.js"></script></body></html>
+<dialog id="quiz"><form method="dialog"><button class="close secondary" aria-label="關閉問答">✕</button></form><span class="eyebrow">環境守護挑戰</span><h2 id="question"></h2><div id="answers"></div><p id="feedback" role="status" aria-live="polite"></p><details id="quiz-family-talk" class="family-guide" hidden><summary>💬 親子想一想（不計分）</summary><p></p></details><button id="quizDone" hidden>完成挑戰</button></dialog><script src="app.js"></script></body></html>
