@@ -40,7 +40,8 @@ const defaultHints = [
 ];
 quizzes.forEach((q,i)=>{q.id=`quiz-${i}`;q.hint ??= defaultHints[i];});
 
-const cards = document.querySelector('#cards');
+const pairCards = document.querySelector('#pair-cards');
+const quizCards = document.querySelector('#quiz-cards');
 const message = document.querySelector('#message');
 const dialog = document.querySelector('#quiz');
 let selected = null;
@@ -56,23 +57,26 @@ function shuffle(items) {
  }
  return result;
 }
-function drawRound(bank, previous) {
- const picked=shuffle(bank).slice(0,4);
+function drawRound(bank, previous, count=4) {
+ const picked=shuffle(bank).slice(0,count);
  // If the random draw repeats the previous set, swap in one unused question.
  const oldIds=new Set(previous.map(item=>item.id));
  if (picked.every(item=>oldIds.has(item.id))) {
-  picked[3]=shuffle(bank.filter(item=>!oldIds.has(item.id)))[0];
+  picked[count-1]=shuffle(bank.filter(item=>!oldIds.has(item.id)))[0];
  }
  return picked;
 }
 function update() {
  document.querySelector('#score').textContent=(matched.size+solved.size-failedPairs.size-failedQuizzes.size)*10;
  document.querySelector('#progress').textContent=matched.size+solved.size;
- document.querySelector('#finish').hidden=matched.size+solved.size!==8;
- document.querySelector('#finish p').textContent=`完成 8 個任務，答對 ${matched.size+solved.size-failedPairs.size-failedQuizzes.size} 題，共得 ${(matched.size+solved.size-failedPairs.size-failedQuizzes.size)*10} 分！看看小知識，再挑戰一次吧。`;
+ document.querySelector('#pair-progress').textContent=`已作答 ${matched.size} / 4 組`;
+ document.querySelector('#quiz-progress').textContent=`已作答 ${solved.size} / 6 題`;
+ document.querySelector('#finish').hidden=matched.size+solved.size!==10;
+ document.querySelector('#finish p').textContent=`完成 10 個任務，答對 ${matched.size+solved.size-failedPairs.size-failedQuizzes.size} 題，共得 ${(matched.size+solved.size-failedPairs.size-failedQuizzes.size)*10} 分！看看小知識，再挑戰一次吧。`;
 }
 function render() {
- cards.replaceChildren();
+ pairCards.replaceChildren();
+ quizCards.replaceChildren();
  for (const {type,item} of deck) {
   const done=type==='orange'?solved.has(item.id):matched.has(item.id);
   const data=type==='orange'?[item.icon,item.title,'點我回答，練習守護環境！']:item[type];
@@ -84,7 +88,7 @@ function render() {
   if(type==='blue') button.setAttribute('aria-pressed',String(selected===item.id));
   button.innerHTML=`<span class="type">${{blue:'水環境卡',green:'生態卡',orange:'守護挑戰卡'}[type]}</span><span class="icon" aria-hidden="true">${data[0]}</span><span class="title">${data[1]}</span><span class="desc">${wrong&&type!=='orange'?`正確配對：${item.blue[1]} ＋ ${item.green[1]}`:data[2]}</span>${done?`<span class="check">${wrong?'已作答・0 分':'✓ 答對'}</span>`:''}`;
   button.onclick=()=>choose(type,item);
-  cards.append(button);
+  (type==='orange'?quizCards:pairCards).append(button);
  }
  update();
 }
@@ -154,9 +158,9 @@ document.querySelector('#quizDone').onclick=()=>{
 function reset() {
  if(dialog.open) dialog.close();
  roundPairs=drawRound(pairs,roundPairs);
- roundQuizzes=drawRound(quizzes,roundQuizzes);
+ roundQuizzes=drawRound(quizzes,roundQuizzes,6);
  const entries=[...roundPairs.flatMap(item=>[{type:'blue',item},{type:'green',item}]),...roundQuizzes.map(item=>({type:'orange',item}))];
- deck=shuffle(entries);
+ deck=[...shuffle(entries.filter(entry=>entry.type!=='orange')),...shuffle(entries.filter(entry=>entry.type==='orange'))];
  selected=null;matched.clear();solved.clear();failedPairs.clear();failedQuizzes.clear();
  message.textContent='新題目準備好了！先選藍卡，再找綠卡配對；也可以先挑戰橘卡！';
  render();
